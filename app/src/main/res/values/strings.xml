@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Omie PDV</string>
+
+    <string name="dashboard">Dashboard</string>
+    <string name="more">Mais</string>
 </resources>
