@@ -17,3 +17,4 @@ rootProject.name = "Omie PDV"
 include(":app")
 include(":design_system")
 include(":dashboard")
+include(":domain")
