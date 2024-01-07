@@ -1,37 +1,27 @@
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
 }
 
 android {
-    namespace = "com.victorvgc.omiepdv"
+    namespace = "com.victorvgc.dashboard"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.victorvgc.omiepdv"
         minSdk = 33
-        targetSdk = 34
-        versionCode = 1
-        versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-
-        debug {
-            isMinifyEnabled = false
         }
     }
     compileOptions {
@@ -56,7 +46,6 @@ android {
 
 dependencies {
     implementation(project(":design_system"))
-    implementation(project(":dashboard"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
