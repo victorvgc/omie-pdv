@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_order_page_title">Criar Pedido</string>
+    <string name="edit_order_page_title">Editar Pedido</string>
+
+    <string name="products_title">Produtos</string>
+
+    <string name="unit_abbrev">Un.</string>
+    <string name="unit_times">x</string>
+    <string name="order_prefix">#</string>
+
+    <string name="hint_client_name">Nome do cliente</string>
+    <string name="hint_product_name">Nome do produto</string>
+    <string name="hint_product_quantity">Qtd.</string>
+    <string name="hint_product_unit_price">Preço unitário</string>
+
+    <string name="add_client">Adicione um cliente:</string>
+    <string name="or">OU</string>
+    <string name="select_existing_client">Selecione um cliente:</string>
+
+    <string name="order_client">Cliente: </string>
+    <string name="add_product">Adicionar produto</string>
+
+    <string name="order_saved_success">O pedido</string>
+    <string name="order_saved_success_1">#%s</string>
+    <string name="order_saved_success_2">foi salvo com sucesso!</string>
+</resources>

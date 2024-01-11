@@ -57,6 +57,8 @@ android {
 dependencies {
     implementation(project(":design_system"))
     implementation(project(":dashboard"))
+    implementation(project(":order_screen"))
+    implementation(project(":navigation"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)

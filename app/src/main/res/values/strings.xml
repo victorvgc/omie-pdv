@@ -3,4 +3,5 @@
 
     <string name="dashboard">Dashboard</string>
     <string name="more">Mais</string>
+    <string name="create_order">Novo Pedido</string>
 </resources>

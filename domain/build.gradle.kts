@@ -34,10 +34,10 @@ android {
 }
 
 dependencies {
+    implementation(project(":utils"))
 
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
-    implementation(libs.material)
     testImplementation(libs.junit)
     testImplementation(libs.junit.kotlin.test)
     testImplementation(libs.mockk)

@@ -1,21 +1,22 @@
 package com.victorvgc.design_system.ui.components.displays
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.victorvgc.design_system.ui.theme.AppTheme
 import java.math.BigDecimal
 
@@ -25,24 +26,29 @@ fun <T> DataDisplay(
     data: T,
     dataFormatter: (T) -> String,
     prefix: String? = null,
-    postfix: String? = null,
-    textSize: TextUnit = 18.sp,
-    spacing: Dp = 4.dp
+    suffix: String? = null,
+    textStyle: TextStyle? = null,
+    extrasStyle: TextStyle? = null,
+    spacing: Dp = 4.dp,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    verticalAlignment: Alignment.Vertical = Alignment.Bottom
 ) {
     val dataToString = dataFormatter(data)
 
+    val contentStyle = textStyle ?: MaterialTheme.typography.bodyMedium
+    val prefixSuffixStyle = extrasStyle ?: MaterialTheme.typography.labelSmall
+
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.Bottom,
+        verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalArrangement
     ) {
+
         AnimatedVisibility(visible = prefix.isNullOrEmpty().not()) {
             Row {
                 Text(
                     text = prefix!!,
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = textSize.times(0.75)
-                    )
+                    style = prefixSuffixStyle
                 )
                 Spacer(modifier = Modifier.width(spacing))
             }
@@ -50,21 +56,15 @@ fun <T> DataDisplay(
 
         Text(
             text = dataToString,
-            style = MaterialTheme.typography.displaySmall.copy(
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = textSize
-            )
+            style = contentStyle
         )
 
-        AnimatedVisibility(visible = postfix.isNullOrEmpty().not()) {
+        AnimatedVisibility(visible = suffix.isNullOrEmpty().not()) {
             Row {
                 Spacer(modifier = Modifier.width(spacing))
                 Text(
-                    text = postfix!!,
-                    style = MaterialTheme.typography.displaySmall.copy(
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = textSize.times(0.75)
-                    )
+                    text = suffix!!,
+                    style = prefixSuffixStyle
                 )
             }
         }
@@ -89,7 +89,7 @@ fun PreviewDataDisplay() {
             DataDisplay(
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
-                postfix = "un."
+                suffix = "un."
             )
         }
     }
@@ -99,26 +99,23 @@ fun PreviewDataDisplay() {
 @Preview(showBackground = true, apiLevel = 33)
 @Composable
 fun PreviewDataDisplaySmall() {
-    val textSize = 14.sp
-
     AppTheme {
         Column {
             DataDisplay(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
-                textSize = textSize
             )
             DataDisplay(
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
                 prefix = "R$",
-                textSize = textSize
             )
             DataDisplay(
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
-                postfix = "un.",
-                textSize = textSize
+                suffix = "un.",
             )
         }
     }
@@ -128,26 +125,21 @@ fun PreviewDataDisplaySmall() {
 @Preview(showBackground = true, apiLevel = 33)
 @Composable
 fun PreviewDataDisplayHuge() {
-    val textSize = 16.sp
-
     AppTheme {
         Column {
             DataDisplay(
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
-                textSize = textSize
             )
             DataDisplay(
                 data = 1234567890,
                 dataFormatter = { it.toString() },
                 prefix = "#",
-                textSize = textSize
             )
             DataDisplay(
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
-                postfix = "un.",
-                textSize = textSize
+                suffix = "un.",
             )
         }
     }
