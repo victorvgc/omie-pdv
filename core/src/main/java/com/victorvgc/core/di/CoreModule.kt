@@ -31,6 +31,8 @@ import com.victorvgc.core.domain.use_cases.GetHighestOrderByIdUseCase
 import com.victorvgc.core.domain.use_cases.GetHighestOrderByIdUseCaseImpl
 import com.victorvgc.core.domain.use_cases.GetOrderUseCase
 import com.victorvgc.core.domain.use_cases.GetOrderUseCaseImpl
+import com.victorvgc.core.domain.use_cases.GetOrdersFromToUseCase
+import com.victorvgc.core.domain.use_cases.GetOrdersFromToUseCaseImpl
 import com.victorvgc.core.domain.use_cases.SaveClientUseCase
 import com.victorvgc.core.domain.use_cases.SaveClientUseCaseImpl
 import com.victorvgc.core.domain.use_cases.SaveOrderUseCase
@@ -151,6 +153,11 @@ object CoreUseCases {
     fun provideGetHighestOrderByIdUseCase(
         orderRepository: OrderRepository
     ): GetHighestOrderByIdUseCase = GetHighestOrderByIdUseCaseImpl(orderRepository)
+
+    @Provides
+    fun provideGetOrderFromToUseCase(
+        orderRepository: OrderRepository
+    ): GetOrdersFromToUseCase = GetOrdersFromToUseCaseImpl(orderRepository)
 }
 
 @Module

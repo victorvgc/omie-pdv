@@ -16,24 +16,23 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.victorvgc.dashboard.ui.DashboardScreen
+import com.victorvgc.dashboard.ui.Dashboard
+import com.victorvgc.dashboard.view_model.DashboardViewModel
 import com.victorvgc.design_system.ui.theme.AppTheme
 import com.victorvgc.navigation.NavigationPath
 import com.victorvgc.omiepdv.bottom_navigation.BottomNavMenuItem
 import com.victorvgc.omiepdv.home.HomeScreen
-import com.victorvgc.order_screen.ui.AddOrderScreen
-import com.victorvgc.order_screen.viewmodel.OrderScreenViewModel
+import com.victorvgc.order_screen.ui.add_edit_order.AddOrderScreen
+import com.victorvgc.order_screen.viewmodel.add_edit_order.OrderScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var orderScreenViewModel: OrderScreenViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        orderScreenViewModel = ViewModelProvider(this)[OrderScreenViewModel::class.java]
         setContent {
 
             val navController = rememberNavController()
@@ -55,11 +54,21 @@ class MainActivity : ComponentActivity() {
                                         NavigationPath.OrderPath().link
                                     )
 
-                                    BottomNavMenuItem.MORE -> navController.navigate(NavigationPath.MorePath.link)
+                                    BottomNavMenuItem.MORE -> navController.navigate(
+                                        NavigationPath.MorePath.link
+                                    )
                                 }
                             },
                             content = { homeModifier ->
-                                DashboardScreen(modifier = homeModifier)
+                                Dashboard(
+                                    modifier = homeModifier,
+                                    dashboardViewModel = ViewModelProvider(this@MainActivity)[DashboardViewModel::class.java].apply { this.init() }
+                                ) {
+                                    navController.popBackStack(
+                                        route = NavigationPath.DashboardPath.path,
+                                        inclusive = false
+                                    )
+                                }
                             }
                         )
                     }
@@ -70,7 +79,7 @@ class MainActivity : ComponentActivity() {
                         })
                     ) { backStackEntry ->
                         AddOrderScreen(
-                            orderScreenViewModel = orderScreenViewModel.apply {
+                            orderScreenViewModel = ViewModelProvider(this@MainActivity)[OrderScreenViewModel::class.java].apply {
                                 orderId = backStackEntry.arguments?.getLong(
                                     NavigationPath.OrderPath.ARG_USER_ID
                                 ) ?: NavigationPath.OrderPath.DEF_USER_ID

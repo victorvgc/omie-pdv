@@ -20,3 +20,9 @@ fun Long.toText(): String {
 
     return decimalFormat.format(this)
 }
+
+fun Int.toText(): String {
+    val decimalFormat = DecimalFormat("#,##0", decimalFormatSymbols)
+
+    return decimalFormat.format(this)
+}

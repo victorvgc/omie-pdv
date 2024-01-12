@@ -41,6 +41,7 @@ fun ErrorScreen(
     imageVector: ImageVector? = null,
     message: String,
     errorCode: Int = 0,
+    showBackButton: Boolean = true,
     onRefreshClick: (() -> Unit)? = null,
     onBackPressed: () -> Unit
 ) {
@@ -53,11 +54,13 @@ fun ErrorScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.onErrorContainer
                 ),
                 title = {}, navigationIcon = {
-                    IconButton(onClick = onBackPressed) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = LocalContext.current.getString(R.string.action_back)
-                        )
+                    if (showBackButton) {
+                        IconButton(onClick = onBackPressed) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowBack,
+                                contentDescription = LocalContext.current.getString(R.string.action_back)
+                            )
+                        }
                     }
                 })
         }
