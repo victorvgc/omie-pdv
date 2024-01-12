@@ -34,8 +34,8 @@ class OrderTest {
         val quantity: Long = 12
 
         // act
-        order.addProduct(product = productTest, quantity = quantity)
-        val result = order.totalPrice
+
+        val result = order.addProduct(product = productTest, quantity = quantity).totalPrice
 
         // assert
         assertEquals(productTest.unitPrice.times(BigDecimal(quantity)), result)
@@ -49,8 +49,7 @@ class OrderTest {
         order.addProduct(product = productTest, quantity = quantity)
 
         // act
-        order.removeProduct(product = productTest)
-        val result = order.totalPrice
+        val result = order.removeProduct(product = productTest).totalPrice
 
         // assert
         assertEquals(BigDecimal.ZERO, result)
@@ -75,8 +74,7 @@ class OrderTest {
         val quantity: Long = 12
 
         // act
-        order.addProduct(product = productTest, quantity = quantity)
-        val result = order.totalUnits
+        val result = order.addProduct(product = productTest, quantity = quantity).totalUnits
 
         // assert
         assertEquals(quantity, result)
@@ -90,8 +88,7 @@ class OrderTest {
         order.addProduct(product = productTest, quantity = quantity)
 
         // act
-        order.removeProduct(product = productTest)
-        val result = order.totalUnits
+        val result = order.removeProduct(product = productTest).totalUnits
 
         // assert
         assertEquals(0, result)
@@ -116,8 +113,7 @@ class OrderTest {
         val quantity: Long = 12
 
         // act
-        order.addProduct(product = productTest, quantity = quantity)
-        val result = order.productList
+        val result = order.addProduct(product = productTest, quantity = quantity).productList
 
         // assert
         val expected = listOf(OrderProduct(productTest, quantity))
@@ -133,8 +129,8 @@ class OrderTest {
         order.addProduct(product = productTest, quantity = quantity)
 
         // act
-        order.removeProduct(product = productTest)
-        val result = order.productList
+
+        val result = order.removeProduct(product = productTest).productList
 
         // assert
         assertEquals(emptyList(), result)
