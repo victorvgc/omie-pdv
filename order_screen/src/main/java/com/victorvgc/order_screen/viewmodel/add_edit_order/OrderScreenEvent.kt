@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.viewmodel
+package com.victorvgc.order_screen.viewmodel.add_edit_order
 
 import com.victorvgc.domain.core.Client
 import com.victorvgc.domain.core.OrderProduct

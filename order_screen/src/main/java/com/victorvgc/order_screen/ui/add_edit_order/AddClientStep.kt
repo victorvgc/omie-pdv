@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.ui
+package com.victorvgc.order_screen.ui.add_edit_order
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,7 @@ import com.victorvgc.domain.core.Order
 import com.victorvgc.order_screen.R
 import com.victorvgc.order_screen.domain.models.OrderScreenState
 import com.victorvgc.order_screen.ui.components.OrderAppBar
-import com.victorvgc.order_screen.viewmodel.OrderScreenEvent
+import com.victorvgc.order_screen.viewmodel.add_edit_order.OrderScreenEvent
 import com.victorvgc.utils.StringListener
 import com.victorvgc.utils.VoidListener
 import com.victorvgc.utils.viewmodel.ScreenState

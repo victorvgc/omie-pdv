@@ -8,6 +8,7 @@
     <string name="unit_abbrev">Un.</string>
     <string name="unit_times">x</string>
     <string name="order_prefix">#</string>
+    <string name="order_replace">#%s</string>
 
     <string name="hint_client_name">Nome do cliente</string>
     <string name="hint_product_name">Nome do produto</string>
@@ -35,4 +36,9 @@
     <string name="singular_were_created">não foi existia antes.</string>
     <string name="plural_were_created">não existiam antes.</string>
     <string name="save_product_changes">Deseja salvar essas novas alterações?</string>
+
+    <string name="client_name_replace">Cliente: %s</string>
+    <string name="products_count_replace">Qtd. de produtos: %s</string>
+
+    <string name="order_list_title">Lista de Pedidos</string>
 </resources>

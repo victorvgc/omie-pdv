@@ -11,4 +11,6 @@ sealed class NavigationPath(val path: String, val link: String = path) {
     }
 
     data object MorePath : NavigationPath("more")
+
+    data object OrderListPath : NavigationPath("order_list")
 }

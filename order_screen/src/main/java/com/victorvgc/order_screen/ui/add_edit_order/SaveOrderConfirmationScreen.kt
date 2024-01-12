@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.ui
+package com.victorvgc.order_screen.ui.add_edit_order
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
