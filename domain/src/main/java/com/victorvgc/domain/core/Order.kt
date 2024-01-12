@@ -1,6 +1,5 @@
 package com.victorvgc.domain.core
 
-import com.victorvgc.utils.extensions.reduceTo
 import java.math.BigDecimal
 import java.util.Date
 
@@ -15,21 +14,13 @@ data class Order(
     }
 
     val totalUnits: Long
-        get() = productList.reduceTo { acc, next ->
-            if (acc != null) {
-                return@reduceTo acc + next.quantity
-            }
-
-            return@reduceTo next.quantity
+        get() = productList.map { it.quantity }.takeIf { it.isNotEmpty() }?.reduce { acc, next ->
+            acc + next
         } ?: 0
 
     val totalPrice: BigDecimal
-        get() = productList.reduceTo { acc, next ->
-            if (acc != null) {
-                return@reduceTo acc.plus(next.totalPrice)
-            }
-
-            return@reduceTo next.totalPrice
+        get() = productList.map { it.totalPrice }.takeIf { it.isNotEmpty() }?.reduce { acc, next ->
+            acc + next
         } ?: BigDecimal.ZERO
 
     fun addProduct(product: Product, quantity: Long): Order {

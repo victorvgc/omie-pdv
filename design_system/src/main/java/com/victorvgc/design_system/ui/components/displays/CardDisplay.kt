@@ -25,8 +25,8 @@ import com.victorvgc.design_system.R
 import com.victorvgc.design_system.ui.theme.AppTheme
 import java.math.BigDecimal
 
-enum class IndicatorDirection() {
-    UP, DOWN
+enum class IndicatorDirection {
+    UP, DOWN, NEUTRAL
 }
 
 @Composable
@@ -36,13 +36,12 @@ fun <T> CardDisplay(
     label: String,
     data: T,
     dataFormatter: (T) -> String,
-    showIndicator: Boolean = false,
-    indicatorDirection: IndicatorDirection = IndicatorDirection.UP,
+    direction: IndicatorDirection = IndicatorDirection.UP,
     onClick: (() -> Unit)? = null
 ) {
     val dataToString = dataFormatter(data)
 
-    val dataIcon: Int = when (indicatorDirection) {
+    @DrawableRes val dataIcon: Int = when (direction) {
         IndicatorDirection.UP -> {
             R.drawable.ic_up
         }
@@ -50,21 +49,24 @@ fun <T> CardDisplay(
         IndicatorDirection.DOWN -> {
             R.drawable.ic_down
         }
+
+        IndicatorDirection.NEUTRAL -> R.drawable.ic_more
     }
 
-    val dataColor = if (showIndicator) {
-        when (indicatorDirection) {
-            IndicatorDirection.UP -> {
-                MaterialTheme.colorScheme.primary
-            }
-
-            IndicatorDirection.DOWN -> {
-                MaterialTheme.colorScheme.error
-            }
+    val dataColor = when (direction) {
+        IndicatorDirection.UP -> {
+            MaterialTheme.colorScheme.primary
         }
-    } else {
-        MaterialTheme.colorScheme.onSurfaceVariant
+
+        IndicatorDirection.DOWN -> {
+            MaterialTheme.colorScheme.error
+        }
+
+        IndicatorDirection.NEUTRAL -> {
+            MaterialTheme.colorScheme.onSurfaceVariant
+        }
     }
+
 
     val componentModifier = if (onClick != null) {
         modifier.clickable { onClick() }
@@ -101,10 +103,10 @@ fun <T> CardDisplay(
                     text = dataToString,
                     style = MaterialTheme.typography.bodyLarge.copy(color = dataColor)
                 )
-                AnimatedVisibility(visible = showIndicator) {
+                AnimatedVisibility(visible = direction != IndicatorDirection.NEUTRAL) {
                     Icon(
                         painter = painterResource(id = dataIcon),
-                        contentDescription = indicatorDirection.name,
+                        contentDescription = direction.name,
                         tint = dataColor
                     )
                 }
@@ -124,23 +126,21 @@ fun PreviewCardDisplay() {
                 label = "Clientes\nAtendidos",
                 data = BigDecimal(10000),
                 dataFormatter = { it.toPlainString() },
-                showIndicator = true,
-                indicatorDirection = IndicatorDirection.UP
+                direction = IndicatorDirection.UP
             )
             CardDisplay(
                 icon = R.drawable.ic_items_sold,
                 label = "Unidades\nVendidas",
                 data = BigDecimal(1000),
                 dataFormatter = { it.toPlainString() },
-                showIndicator = true,
-                indicatorDirection = IndicatorDirection.DOWN
+                direction = IndicatorDirection.DOWN
             )
             CardDisplay(
                 icon = R.drawable.ic_products_count,
                 label = "Pedidos\nFeitos",
                 data = BigDecimal(100),
                 dataFormatter = { it.toPlainString() },
-                showIndicator = false
+                direction = IndicatorDirection.NEUTRAL
             )
         }
     }

@@ -22,6 +22,9 @@ sealed class ResultWrapper<T> {
 
         return this
     }
+
+    fun toSuccess(): Success<T>? = this as? Success<T>
+    fun toFailure(): Failure<T>? = this as? Failure<T>
 }
 
 fun <T> T.toSuccess(): ResultWrapper.Success<T> = ResultWrapper.Success(data = this)

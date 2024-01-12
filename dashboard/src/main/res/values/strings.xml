@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="filter_day">Dia</string>
+    <string name="filter_month">Mês</string>
+    <string name="filter_year">Ano</string>
+    <string name="filter_all">Tudo</string>
+
+    <string name="total_clients_served">Clientes\nAtendidos</string>
+    <string name="total_units_sold">Unidades\nVendidas</string>
+    <string name="total_orders">Pedidos\nFeitos</string>
+</resources>

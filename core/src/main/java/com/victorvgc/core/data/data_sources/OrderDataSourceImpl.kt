@@ -158,7 +158,6 @@ class OrderDataSourceImpl @Inject constructor(
     override suspend fun getOrdersFromTo(from: Long, to: Long): ResultWrapper<List<Order>> =
         suspendCoroutine { continuation ->
             val snapshotTask = db.collection(FirestoreConstants.COLLECTION_ORDER)
-                .orderBy(FirestoreConstants.FIELD_ORDER_ID, Query.Direction.DESCENDING)
                 .where(Filter.greaterThan(FirestoreConstants.FIELD_ORDER_CREATED_AT, from))
                 .where(Filter.lessThan(FirestoreConstants.FIELD_ORDER_CREATED_AT, to))
                 .get()
