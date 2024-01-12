@@ -17,7 +17,7 @@ coroutines = "1.6.4"
 google-services = "4.4.0"
 firebase-bom = "32.7.0"
 hilt = "2.50"
-material = "1.11.0"
+arch = "1.1.1"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -40,11 +40,12 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 junit-kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit", version.ref = "kotlin" }
 coroutines = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+android-arch-test = { group = "android.arch.core", name = "core-testing", version.ref = "arch" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
