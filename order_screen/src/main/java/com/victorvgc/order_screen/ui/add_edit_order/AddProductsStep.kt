@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.ui
+package com.victorvgc.order_screen.ui.add_edit_order
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -50,7 +50,7 @@ import com.victorvgc.order_screen.ui.components.AddProductListItem
 import com.victorvgc.order_screen.ui.components.AddUpdateProductsDialog
 import com.victorvgc.order_screen.ui.components.OrderAppBar
 import com.victorvgc.order_screen.ui.components.ProductListItem
-import com.victorvgc.order_screen.viewmodel.OrderScreenEvent
+import com.victorvgc.order_screen.viewmodel.add_edit_order.OrderScreenEvent
 import com.victorvgc.utils.StringListener
 import com.victorvgc.utils.VoidListener
 import com.victorvgc.utils.viewmodel.ScreenState

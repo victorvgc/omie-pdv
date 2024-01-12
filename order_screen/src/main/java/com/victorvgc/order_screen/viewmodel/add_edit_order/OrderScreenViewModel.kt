@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.viewmodel
+package com.victorvgc.order_screen.viewmodel.add_edit_order
 
 import com.victorvgc.core.domain.use_cases.DeleteOrderUseCase
 import com.victorvgc.core.domain.use_cases.GetAllClientsUseCase
@@ -8,6 +8,7 @@ import com.victorvgc.core.domain.use_cases.GetOrderUseCase
 import com.victorvgc.core.domain.use_cases.SaveClientUseCase
 import com.victorvgc.core.domain.use_cases.SaveOrderUseCase
 import com.victorvgc.core.domain.use_cases.SaveProductUseCase
+import com.victorvgc.core.domain.use_cases.UpdateOrderUseCase
 import com.victorvgc.core.domain.use_cases.UpdateProductUseCase
 import com.victorvgc.domain.core.Client
 import com.victorvgc.domain.core.Order
@@ -35,6 +36,7 @@ class OrderScreenViewModel @Inject constructor(
     private val saveProductUseCase: SaveProductUseCase,
     private val updateProductUseCase: UpdateProductUseCase,
     private val deleteOrderUseCase: DeleteOrderUseCase,
+    private val updateOrderUseCase: UpdateOrderUseCase,
 ) :
     BaseViewModel<OrderScreenState, OrderScreenEvent>() {
 
@@ -167,7 +169,13 @@ class OrderScreenViewModel @Inject constructor(
 
     private fun saveOrder() {
         execute {
-            saveOrderUseCase(orderScreenState.order).onSuccess {
+            val result = if (orderScreenState.isEdit) {
+                updateOrderUseCase(orderScreenState.order)
+            } else {
+                saveOrderUseCase(orderScreenState.order)
+            }
+
+            result.onSuccess {
                 handleNextClicked()
             }.onFailure {
                 showError(it.code)
@@ -205,7 +213,12 @@ class OrderScreenViewModel @Inject constructor(
 
     private fun evaluateProductAlreadyExists() {
         val productExists =
-            allProductsList.find { it.name == orderScreenState.currentProduct.product.name }
+            allProductsList.find {
+                it.name.equals(
+                    orderScreenState.currentProduct.product.name,
+                    ignoreCase = true
+                )
+            }
 
         if (productExists != null) {
             orderScreenState =

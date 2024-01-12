@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.ui
+package com.victorvgc.order_screen.ui.add_edit_order
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.victorvgc.design_system.ui.screens.ErrorScreen
 import com.victorvgc.design_system.ui.screens.LoadingScreen
 import com.victorvgc.order_screen.domain.models.OrderScreenState
-import com.victorvgc.order_screen.viewmodel.OrderScreenViewModel
+import com.victorvgc.order_screen.viewmodel.add_edit_order.OrderScreenViewModel
 import com.victorvgc.utils.viewmodel.ScreenState
 import com.victorvgc.design_system.R as designSystemR
 

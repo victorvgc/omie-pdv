@@ -21,8 +21,9 @@ import com.victorvgc.omiepdv.bottom_navigation.BottomNavMenuItem
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    content: @Composable (Modifier) -> Unit,
-    onNavMenuClicked: (BottomNavMenuItem) -> Unit
+    selectedItem: BottomNavMenuItem,
+    onNavMenuClicked: (BottomNavMenuItem) -> Unit,
+    content: @Composable (Modifier) -> Unit
 ) {
 
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -39,7 +40,7 @@ fun HomeScreen(
         },
         bottomBar = {
             BottomNavMenu(
-                selectedItem = BottomNavMenuItem.DASHBOARD,
+                selectedItem = selectedItem,
                 onMenuItemClick = onNavMenuClicked
             )
         }
@@ -54,6 +55,7 @@ fun HomeScreen(
 fun PreviewHomeScreen() {
     AppTheme {
         HomeScreen(
+            selectedItem = BottomNavMenuItem.DASHBOARD,
             onNavMenuClicked = {},
             content = {},
         )

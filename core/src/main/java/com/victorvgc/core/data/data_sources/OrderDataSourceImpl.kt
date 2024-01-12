@@ -62,7 +62,6 @@ class OrderDataSourceImpl @Inject constructor(
                     .update(
                         mapOf(
                             FirestoreConstants.FIELD_ORDER_CLIENT to order.client.name,
-                            FirestoreConstants.FIELD_ORDER_CREATED_AT to order.createdAt,
                             FirestoreConstants.FIELD_ORDER_PRODUCTS_LIST to buildList {
                                 for (orderProduct in order.productList) {
                                     add(
