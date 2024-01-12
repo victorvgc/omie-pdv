@@ -12,7 +12,7 @@ abstract class BaseViewModel<StateData, EventType> : ViewModel() {
 
     val screenState: StateFlow<ScreenState<StateData>> = _screenState.asStateFlow()
 
-    protected fun showError(code: Int, data: StateData? = null) {
+    protected fun showError(code: Int = -1, data: StateData? = null) {
         execute {
             _screenState.emit(ScreenState.Error(code, data))
         }

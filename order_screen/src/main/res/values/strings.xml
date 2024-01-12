@@ -24,4 +24,15 @@
     <string name="order_saved_success">O pedido</string>
     <string name="order_saved_success_1">#%s</string>
     <string name="order_saved_success_2">foi salvo com sucesso!</string>
+
+    <string name="before_continue">Antes de continuar…</string>
+    <string name="we_noticed">Notamos que</string>
+    <string name="singular_product">%s produto</string>
+    <string name="plural_product">%s produtos</string>
+    <string name="and">e</string>
+    <string name="singular_were_modified">foi modificado</string>
+    <string name="plural_were_modified">foram modificados</string>
+    <string name="singular_were_created">não foi existia antes.</string>
+    <string name="plural_were_created">não existiam antes.</string>
+    <string name="save_product_changes">Deseja salvar essas novas alterações?</string>
 </resources>

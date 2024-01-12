@@ -6,11 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavController
 import com.victorvgc.design_system.ui.screens.ErrorScreen
 import com.victorvgc.design_system.ui.screens.LoadingScreen
-import com.victorvgc.navigation.NavigationPath
-import com.victorvgc.order_screen.domain.OrderScreenState
+import com.victorvgc.order_screen.domain.models.OrderScreenState
 import com.victorvgc.order_screen.viewmodel.OrderScreenViewModel
 import com.victorvgc.utils.viewmodel.ScreenState
 import com.victorvgc.design_system.R as designSystemR
@@ -18,7 +16,6 @@ import com.victorvgc.design_system.R as designSystemR
 @Composable
 fun AddOrderScreen(
     orderScreenViewModel: OrderScreenViewModel,
-    navController: NavController,
     onBackClick: () -> Unit
 ) {
     val screenState: ScreenState<OrderScreenState> by orderScreenViewModel.screenState.collectAsState()
@@ -26,6 +23,7 @@ fun AddOrderScreen(
     when (val state = screenState) {
         is ScreenState.Error -> ErrorScreen(
             message = LocalContext.current.getString(designSystemR.string.error_message_generic),
+            errorCode = state.code,
             imageVector = Icons.Default.Warning,
             onBackPressed = onBackClick
         )
@@ -33,10 +31,7 @@ fun AddOrderScreen(
         is ScreenState.Loading -> LoadingScreen()
         is ScreenState.Success -> {
             if (state.data.leaveScreen) {
-                navController.popBackStack(
-                    route = NavigationPath.DashboardPath.path,
-                    inclusive = false
-                )
+                onBackClick()
             } else {
                 when (state.data.currentStep) {
                     OrderScreenState.ScreenStep.ADD_CLIENT -> {

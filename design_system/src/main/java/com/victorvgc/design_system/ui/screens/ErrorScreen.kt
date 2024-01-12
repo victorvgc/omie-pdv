@@ -40,6 +40,7 @@ fun ErrorScreen(
     @DrawableRes icon: Int = 0,
     imageVector: ImageVector? = null,
     message: String,
+    errorCode: Int = 0,
     onRefreshClick: (() -> Unit)? = null,
     onBackPressed: () -> Unit
 ) {
@@ -87,8 +88,14 @@ fun ErrorScreen(
             }
             Spacer(modifier = Modifier.height(16.dp))
             Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = message,
-                style = MaterialTheme.typography.displayLarge.copy(color = MaterialTheme.colorScheme.onErrorContainer)
+                style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onErrorContainer)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = LocalContext.current.getString(R.string.error_code, errorCode.toString()),
+                style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onErrorContainer)
             )
             if (onRefreshClick != null) {
                 Spacer(modifier = Modifier.height(32.dp))

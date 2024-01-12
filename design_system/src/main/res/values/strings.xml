@@ -5,9 +5,11 @@
     <string name="action_save">Salvar</string>
     <string name="action_refresh">Recarregar</string>
     <string name="action_continue">Continuar</string>
+    <string name="action_no">Não</string>
     <string name="action_edit">Editar</string>
 
     <string name="error_message_generic">Ops! Algo estranho aconteceu, tente novamente mais tarde.</string>
+    <string name="error_code">Código do erro: %s</string>
 
     <string name="currency">R$</string>
     <string name="currency_format">R$ %s</string>

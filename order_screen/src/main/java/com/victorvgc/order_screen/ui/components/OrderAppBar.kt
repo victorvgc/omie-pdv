@@ -28,8 +28,7 @@ import com.victorvgc.design_system.ui.theme.AppTheme
 fun OrderAppBar(
     scrollBehavior: TopAppBarScrollBehavior,
     isEdit: Boolean,
-    showDelete: Boolean = false,
-    onDeleteClick: (() -> Unit)? = null,
+    onDeleteClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
     val title = if (isEdit) {
@@ -51,9 +50,9 @@ fun OrderAppBar(
             }
         },
         actions = {
-            AnimatedVisibility(visible = showDelete) {
+            AnimatedVisibility(visible = isEdit) {
                 IconButton(onClick = {
-                    onDeleteClick?.invoke()
+                    onDeleteClick()
                 }) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -105,7 +104,6 @@ fun PreviewOderAppBarDelete() {
                     isEdit = true,
                     onBackClick = {},
                     onDeleteClick = {},
-                    showDelete = true
                 )
             }
         ) {

@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,10 +23,17 @@ import com.victorvgc.omiepdv.bottom_navigation.BottomNavMenuItem
 import com.victorvgc.omiepdv.home.HomeScreen
 import com.victorvgc.order_screen.ui.AddOrderScreen
 import com.victorvgc.order_screen.viewmodel.OrderScreenViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private lateinit var orderScreenViewModel: OrderScreenViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        orderScreenViewModel = ViewModelProvider(this)[OrderScreenViewModel::class.java]
         setContent {
 
             val navController = rememberNavController()
@@ -62,14 +70,16 @@ class MainActivity : ComponentActivity() {
                         })
                     ) { backStackEntry ->
                         AddOrderScreen(
-                            orderScreenViewModel = OrderScreenViewModel(
-                                backStackEntry.arguments?.getLong(
+                            orderScreenViewModel = orderScreenViewModel.apply {
+                                orderId = backStackEntry.arguments?.getLong(
                                     NavigationPath.OrderPath.ARG_USER_ID
                                 ) ?: NavigationPath.OrderPath.DEF_USER_ID
-                            ),
-                            navController = navController
+                            },
                         ) {
-
+                            navController.popBackStack(
+                                route = NavigationPath.DashboardPath.path,
+                                inclusive = false
+                            )
                         }
                     }
                     composable(NavigationPath.MorePath.path) {

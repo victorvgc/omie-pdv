@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "924628900847",
+    "project_id": "omie-test",
+    "storage_bucket": "omie-test.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924628900847:android:012d0776e8072f6148f41a",
+        "android_client_info": {
+          "package_name": "com.victorvgc.omiepdv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuF5fNnAD4zCL7_RVF_FEa1lMd2qucB6Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

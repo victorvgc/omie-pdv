@@ -44,9 +44,10 @@ import com.victorvgc.domain.core.Order
 import com.victorvgc.domain.core.OrderProduct
 import com.victorvgc.domain.core.Product
 import com.victorvgc.order_screen.R
-import com.victorvgc.order_screen.domain.OrderScreenState
+import com.victorvgc.order_screen.domain.models.OrderScreenState
 import com.victorvgc.order_screen.ui.components.AddProductBottomSheet
 import com.victorvgc.order_screen.ui.components.AddProductListItem
+import com.victorvgc.order_screen.ui.components.AddUpdateProductsDialog
 import com.victorvgc.order_screen.ui.components.OrderAppBar
 import com.victorvgc.order_screen.ui.components.ProductListItem
 import com.victorvgc.order_screen.viewmodel.OrderScreenEvent
@@ -107,6 +108,21 @@ fun AddProductsStep(
             sendEvent(
                 OrderScreenEvent.OnEditClientClicked
             )
+        },
+        onConfirmProductDialog = {
+            sendEvent(
+                OrderScreenEvent.OnConfirmProductsDialog
+            )
+        },
+        onDismissProductDialog = {
+            sendEvent(
+                OrderScreenEvent.OnDismissProductsDialog
+            )
+        },
+        onDeleteOrder = {
+            sendEvent(
+                OrderScreenEvent.OnDeleteOrderClicked
+            )
         }
     )
 }
@@ -123,7 +139,10 @@ private fun AddProductsScreen(
     onRemoveProduct: (OrderProduct) -> Unit,
     onBackClick: VoidListener,
     onSaveClick: VoidListener,
-    onEditClient: VoidListener
+    onEditClient: VoidListener,
+    onDismissProductDialog: VoidListener,
+    onConfirmProductDialog: VoidListener,
+    onDeleteOrder: VoidListener
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -145,10 +164,10 @@ private fun AddProductsScreen(
         topBar = {
             OrderAppBar(
                 scrollBehavior = scrollBehavior,
-                isEdit = state.isEdit
-            ) {
-                onBackClick()
-            }
+                isEdit = state.isEdit,
+                onDeleteClick = onDeleteOrder,
+                onBackClick = onBackClick
+            )
         },
         scaffoldState = scaffoldState,
         sheetPeekHeight = 100.dp,
@@ -175,6 +194,15 @@ private fun AddProductsScreen(
             )
         }) {
         Scaffold { padding ->
+            if (state.showUpdateProductsDialog) {
+                AddUpdateProductsDialog(
+                    newProductsCount = state.productsToCreate,
+                    updateProductsCount = state.productsToUpdate,
+                    onDismiss = onDismissProductDialog,
+                    onConfirmListener = onConfirmProductDialog
+                )
+            }
+
             Column(
                 modifier = Modifier
                     .padding(padding)
@@ -288,7 +316,7 @@ fun PreviewAddProductsStep() {
             OrderScreenState(
                 order = order,
                 showProductForm = false,
-                isEdit = true
+                isEdit = true,
             ),
             onAddProduct = {},
             onShowProductForm = {},
@@ -298,7 +326,10 @@ fun PreviewAddProductsStep() {
             onRemoveProduct = {},
             onBackClick = {},
             onSaveClick = {},
-            onEditClient = {}
+            onEditClient = {},
+            onDismissProductDialog = {},
+            onConfirmProductDialog = {},
+            onDeleteOrder = {}
         )
     }
 }

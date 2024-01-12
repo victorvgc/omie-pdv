@@ -37,9 +37,11 @@ import com.victorvgc.design_system.ui.theme.AppTheme
 import com.victorvgc.domain.core.Client
 import com.victorvgc.domain.core.Order
 import com.victorvgc.order_screen.R
-import com.victorvgc.order_screen.domain.OrderScreenState
+import com.victorvgc.order_screen.domain.models.OrderScreenState
 import com.victorvgc.order_screen.ui.components.OrderAppBar
 import com.victorvgc.order_screen.viewmodel.OrderScreenEvent
+import com.victorvgc.utils.StringListener
+import com.victorvgc.utils.VoidListener
 import com.victorvgc.utils.viewmodel.ScreenState
 import com.victorvgc.design_system.R as designSystemR
 
@@ -61,6 +63,9 @@ fun AddClientStep(
         },
         onContinueClick = {
             sendEvent(OrderScreenEvent.OnNextStepClicked)
+        },
+        onDeleteOrder = {
+            sendEvent(OrderScreenEvent.OnDeleteOrderClicked)
         }
     )
 }
@@ -70,9 +75,10 @@ fun AddClientStep(
 private fun AddClientStepScreen(
     state: OrderScreenState,
     onClientSelected: (Client) -> Unit,
-    onClientNameUpdate: (String) -> Unit,
-    onContinueClick: () -> Unit,
-    onBackClick: () -> Unit
+    onClientNameUpdate: StringListener,
+    onContinueClick: VoidListener,
+    onBackClick: VoidListener,
+    onDeleteOrder: VoidListener
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -83,7 +89,8 @@ private fun AddClientStepScreen(
             OrderAppBar(
                 scrollBehavior = scrollBehavior,
                 isEdit = state.isEdit,
-                onBackClick = onBackClick
+                onBackClick = onBackClick,
+                onDeleteClick = onDeleteOrder
             )
         },
         floatingActionButton = {
@@ -191,7 +198,8 @@ fun PreviewAddClient() {
             onClientSelected = {},
             onClientNameUpdate = {},
             onContinueClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onDeleteOrder = {}
         )
     }
 }
@@ -274,7 +282,8 @@ fun PreviewAddClientWithClientList() {
             onClientSelected = {},
             onClientNameUpdate = {},
             onContinueClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            onDeleteOrder = {}
         )
     }
 }

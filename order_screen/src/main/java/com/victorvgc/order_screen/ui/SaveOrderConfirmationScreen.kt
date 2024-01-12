@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.victorvgc.design_system.ui.theme.AppTheme
 import com.victorvgc.domain.core.Order
 import com.victorvgc.order_screen.R
-import com.victorvgc.order_screen.domain.OrderScreenState
+import com.victorvgc.order_screen.domain.models.OrderScreenState
 import com.victorvgc.utils.viewmodel.ScreenState
 
 @Composable

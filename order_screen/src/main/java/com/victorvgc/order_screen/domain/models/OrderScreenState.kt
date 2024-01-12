@@ -1,4 +1,4 @@
-package com.victorvgc.order_screen.domain
+package com.victorvgc.order_screen.domain.models
 
 import com.victorvgc.domain.core.Client
 import com.victorvgc.domain.core.Order
@@ -16,7 +16,10 @@ data class OrderScreenState(
     val showDiscardChangesDialog: Boolean = false,
     val currentStep: ScreenStep = ScreenStep.ADD_CLIENT,
     val clientsList: List<Client> = emptyList(),
-    val productList: List<Product> = emptyList()
+    val productList: List<Product> = emptyList(),
+    val showUpdateProductsDialog: Boolean = false,
+    val productsToUpdate: Int = 0,
+    val productsToCreate: Int = 0,
 ) {
     enum class ScreenStep {
         ADD_CLIENT, ADD_PRODUCTS, FINISH_ORDER

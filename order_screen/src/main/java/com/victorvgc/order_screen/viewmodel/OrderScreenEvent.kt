@@ -18,6 +18,8 @@ sealed class OrderScreenEvent {
     data object OnBackClicked : OrderScreenEvent()
     data object OnNextStepClicked : OrderScreenEvent()
     data class OnClientSelected(val client: Client) : OrderScreenEvent()
-
     data object OnEditClientClicked : OrderScreenEvent()
+    data object OnConfirmProductsDialog : OrderScreenEvent()
+    data object OnDismissProductsDialog : OrderScreenEvent()
+    data object OnDeleteOrderClicked : OrderScreenEvent()
 }

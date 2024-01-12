@@ -2,11 +2,13 @@ package com.victorvgc.domain.core
 
 import com.victorvgc.utils.extensions.reduceTo
 import java.math.BigDecimal
+import java.util.Date
 
 data class Order(
     val id: Long,
     val client: Client = Client.Empty,
-    val productList: List<OrderProduct> = emptyList()
+    val productList: List<OrderProduct> = emptyList(),
+    val createdAt: Long = Date().time
 ) {
     companion object {
         val Empty = Order(0)

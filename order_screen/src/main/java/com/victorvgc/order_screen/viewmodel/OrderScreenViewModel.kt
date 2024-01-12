@@ -1,45 +1,118 @@
 package com.victorvgc.order_screen.viewmodel
 
+import com.victorvgc.core.domain.use_cases.DeleteOrderUseCase
+import com.victorvgc.core.domain.use_cases.GetAllClientsUseCase
+import com.victorvgc.core.domain.use_cases.GetAllProductsUseCase
+import com.victorvgc.core.domain.use_cases.GetHighestOrderByIdUseCase
+import com.victorvgc.core.domain.use_cases.GetOrderUseCase
+import com.victorvgc.core.domain.use_cases.SaveClientUseCase
+import com.victorvgc.core.domain.use_cases.SaveOrderUseCase
+import com.victorvgc.core.domain.use_cases.SaveProductUseCase
+import com.victorvgc.core.domain.use_cases.UpdateProductUseCase
 import com.victorvgc.domain.core.Client
 import com.victorvgc.domain.core.Order
 import com.victorvgc.domain.core.OrderProduct
 import com.victorvgc.domain.core.Product
-import com.victorvgc.order_screen.domain.OrderScreenState
+import com.victorvgc.order_screen.domain.models.OrderScreenState
+import com.victorvgc.utils.extensions.async
 import com.victorvgc.utils.extensions.execute
+import com.victorvgc.utils.failures.FailureCodes
 import com.victorvgc.utils.viewmodel.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.math.BigDecimal
+import javax.inject.Inject
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.delay
 
-class OrderScreenViewModel(
-    orderId: Long
-) : BaseViewModel<OrderScreenState, OrderScreenEvent>() {
+@HiltViewModel
+class OrderScreenViewModel @Inject constructor(
+    private val getHighestOrderByIdUseCase: GetHighestOrderByIdUseCase,
+    private val saveOrderUseCase: SaveOrderUseCase,
+    private val getAllClientsUseCase: GetAllClientsUseCase,
+    private val getAllProductsUseCase: GetAllProductsUseCase,
+    private val getOrderUseCase: GetOrderUseCase,
+    private val saveClientUseCase: SaveClientUseCase,
+    private val saveProductUseCase: SaveProductUseCase,
+    private val updateProductUseCase: UpdateProductUseCase,
+    private val deleteOrderUseCase: DeleteOrderUseCase,
+) :
+    BaseViewModel<OrderScreenState, OrderScreenEvent>() {
 
-    private var orderScreenState: OrderScreenState
+    private var orderScreenState: OrderScreenState = OrderScreenState(order = Order.Empty)
+
     private var allClientsList: List<Client> = emptyList()
     private var allProductsList: List<Product> = emptyList()
 
-    init {
-        if (orderId != 0.toLong()) {
-            orderScreenState = OrderScreenState(
-                order = Order(id = orderId),
-                isEdit = true,
-                currentStep = OrderScreenState.ScreenStep.ADD_PRODUCTS
-            )
-            showLoading(preLoadedData = orderScreenState)
-            // todo: fetch order from use case and display it
-        } else {
-            // todo: fetch latest order id and add 1
-            orderScreenState = OrderScreenState(order = Order(id = 123))
+    private var productsToAdd: List<Product> = emptyList()
+    private var productsToUpdate: List<Product> = emptyList()
+
+    var orderId: Long = 0
+        set(value) {
+            init(value)
+
+            field = value
         }
 
-        // todo: fetch clients list
-        // todo: fetch products list
-        showSuccess(
-            data = orderScreenState.copy(
-                clientsList = allClientsList,
-                productList = allProductsList
-            )
-        )
+    private fun init(orderId: Long) {
+        execute {
+            if (orderId != 0.toLong()) {
+                orderScreenState = OrderScreenState(
+                    order = Order(id = orderId),
+                    isEdit = true,
+                    currentStep = OrderScreenState.ScreenStep.ADD_PRODUCTS
+                )
+                showLoading(preLoadedData = orderScreenState)
+
+                val orderResult = getOrderUseCase(orderId)
+
+                if (orderResult.isSuccess) {
+                    orderResult.onSuccess {
+                        orderScreenState = orderScreenState.copy(order = it)
+                    }
+                } else {
+                    showError(code = FailureCodes.FAILURE_CODE_READ.code)
+
+                    return@execute
+                }
+            } else {
+                val highestOrderIdResult = getHighestOrderByIdUseCase()
+
+                if (highestOrderIdResult.isSuccess) {
+                    highestOrderIdResult.onSuccess {
+                        val latestOrderId = it.id
+
+                        orderScreenState = OrderScreenState(order = Order(id = latestOrderId + 1))
+                    }
+                } else {
+                    showError(code = FailureCodes.FAILURE_CODE_READ.code)
+
+                    return@execute
+                }
+            }
+
+            val allClientsResult = getAllClientsUseCase()
+
+            val allProductsResult = getAllProductsUseCase()
+
+            if (allClientsResult.isSuccess && allProductsResult.isSuccess) {
+                allClientsResult.onSuccess {
+                    allClientsList = it
+                }
+
+                allProductsResult.onSuccess {
+                    allProductsList = it
+                }
+
+                orderScreenState = orderScreenState.copy(
+                    clientsList = allClientsList,
+                    productList = allProductsList
+                )
+
+                showSuccess(orderScreenState)
+            } else {
+                showError(code = FailureCodes.FAILURE_CODE_READ.code)
+            }
+        }
     }
 
     override fun onScreenEvent(event: OrderScreenEvent) {
@@ -59,6 +132,9 @@ class OrderScreenViewModel(
             OrderScreenEvent.OnNextStepClicked -> handleNextClicked()
             OrderScreenEvent.ShowAddCurrentProduct -> showProductForm()
             OrderScreenEvent.OnEditClientClicked -> handleEditClient()
+            OrderScreenEvent.OnConfirmProductsDialog -> saveAndUpdateProducts()
+            OrderScreenEvent.OnDismissProductsDialog -> dismissProductDialog()
+            OrderScreenEvent.OnDeleteOrderClicked -> deleteCurrentOrderAndFinish()
         }
     }
 
@@ -90,8 +166,14 @@ class OrderScreenViewModel(
     }
 
     private fun saveOrder() {
-        // todo: save into an use case
-        handleNextClicked()
+        execute {
+            saveOrderUseCase(orderScreenState.order).onSuccess {
+                handleNextClicked()
+            }.onFailure {
+                showError(it.code)
+            }
+        }
+
     }
 
     private fun updateClientName(name: String) {
@@ -116,8 +198,19 @@ class OrderScreenViewModel(
 
         evaluateOrderToSave()
         evaluateAddProduct()
+        evaluateProductAlreadyExists()
 
         showSuccess(data = orderScreenState)
+    }
+
+    private fun evaluateProductAlreadyExists() {
+        val productExists =
+            allProductsList.find { it.name == orderScreenState.currentProduct.product.name }
+
+        if (productExists != null) {
+            orderScreenState =
+                orderScreenState.copy(currentProduct = orderScreenState.currentProduct.copy(product = productExists))
+        }
     }
 
     private fun updateProductUnitPrice(price: String) {
@@ -199,34 +292,38 @@ class OrderScreenViewModel(
     }
 
     private fun confirmDiscardChanges() {
-        orderScreenState = orderScreenState.copy(leaveScreen = true)
+        resetStateAndLeave()
 
         showSuccess(orderScreenState)
     }
 
     private fun handleBackClick() {
-        orderScreenState = when (orderScreenState.currentStep) {
+        when (orderScreenState.currentStep) {
             OrderScreenState.ScreenStep.ADD_CLIENT -> {
                 if (orderScreenState.isEdit) {
-                    orderScreenState.copy(currentStep = OrderScreenState.ScreenStep.ADD_PRODUCTS)
+                    orderScreenState =
+                        orderScreenState.copy(currentStep = OrderScreenState.ScreenStep.ADD_PRODUCTS)
+
+                    showSuccess(orderScreenState)
                 } else {
-                    orderScreenState.copy(leaveScreen = true)
+                    resetStateAndLeave()
                 }
             }
 
             OrderScreenState.ScreenStep.ADD_PRODUCTS -> {
                 evaluateClientInfo()
                 if (orderScreenState.isEdit) {
-                    orderScreenState.copy(leaveScreen = true)
+                    resetStateAndLeave()
                 } else {
-                    orderScreenState.copy(currentStep = OrderScreenState.ScreenStep.ADD_CLIENT)
+                    orderScreenState =
+                        orderScreenState.copy(currentStep = OrderScreenState.ScreenStep.ADD_CLIENT)
+
+                    showSuccess(orderScreenState)
                 }
             }
 
-            OrderScreenState.ScreenStep.FINISH_ORDER -> orderScreenState
+            OrderScreenState.ScreenStep.FINISH_ORDER -> {}
         }
-
-        showSuccess(orderScreenState)
     }
 
     private fun handleEditClient() {
@@ -240,6 +337,8 @@ class OrderScreenViewModel(
         orderScreenState =
             orderScreenState.copy(order = orderScreenState.order.copy(client = client))
 
+        evaluateClientInfo()
+
         showSuccess(orderScreenState)
     }
 
@@ -251,14 +350,18 @@ class OrderScreenViewModel(
             }
 
             OrderScreenState.ScreenStep.ADD_PRODUCTS -> {
-                // todo: evaluate if need to save any new product or client
+                showLoading()
+                evaluateNewClient()
+                if (haveToUpdateProducts().not()) {
+                    autoCloseAfterFinish()
 
-                autoCloseAfterFinish()
-
-                orderScreenState.copy(currentStep = OrderScreenState.ScreenStep.FINISH_ORDER)
+                    orderScreenState.copy(currentStep = OrderScreenState.ScreenStep.FINISH_ORDER)
+                } else {
+                    orderScreenState
+                }
             }
 
-            OrderScreenState.ScreenStep.FINISH_ORDER -> orderScreenState.copy(leaveScreen = true)
+            OrderScreenState.ScreenStep.FINISH_ORDER -> resetStateAndLeave()
         }
 
         showSuccess(orderScreenState)
@@ -286,8 +389,117 @@ class OrderScreenViewModel(
     private fun autoCloseAfterFinish() {
         execute {
             delay(1200)
-            orderScreenState = orderScreenState.copy(leaveScreen = true)
+
+            resetStateAndLeave()
+        }
+    }
+
+    private fun resetStateAndLeave(): OrderScreenState {
+        orderScreenState = OrderScreenState(Order.Empty, leaveScreen = true)
+
+        showSuccess(orderScreenState)
+
+        orderScreenState = orderScreenState.copy(leaveScreen = false)
+
+        return orderScreenState
+    }
+
+    private fun evaluateNewClient() {
+        val client = orderScreenState.order.client
+
+        if (allClientsList.contains(client).not()) {
+            execute {
+                saveClientUseCase(client)
+            }
+        }
+    }
+
+    private fun haveToUpdateProducts(): Boolean {
+        val orderProducts = orderScreenState.order.productList
+
+        var showDialog = false
+
+        val productsToAdd = mutableListOf<Product>()
+        val productsToUpdate = mutableListOf<Product>()
+
+        orderProducts.forEach { orderProduct ->
+            val product = allProductsList.firstOrNull { it.name == orderProduct.product.name }
+
+            if (product == null || product.unitPrice != orderProduct.product.unitPrice) {
+                showDialog = true
+
+                if (product == null) {
+                    productsToAdd.add(orderProduct.product)
+                } else {
+                    productsToUpdate.add(orderProduct.product)
+                }
+            }
+        }
+
+        if (showDialog) {
+            orderScreenState = orderScreenState.copy(
+                showUpdateProductsDialog = true,
+                productsToCreate = productsToAdd.size,
+                productsToUpdate = productsToUpdate.size
+            )
+
+            this.productsToAdd = productsToAdd
+            this.productsToUpdate = productsToUpdate
+
+            return true
+        }
+
+        return false
+    }
+
+    private fun saveAndUpdateProducts() {
+        execute {
+            val waitAllJobsList = mutableListOf<Deferred<Any>>()
+
+            productsToAdd.forEach {
+                waitAllJobsList.add(async { saveProductUseCase(it) })
+            }
+
+            productsToUpdate.forEach {
+                waitAllJobsList.add(async { updateProductUseCase(it) })
+            }
+
+            orderScreenState = orderScreenState.copy(
+                showUpdateProductsDialog = false,
+                currentStep = OrderScreenState.ScreenStep.FINISH_ORDER
+            )
+
+            waitAllJobsList.forEach {
+                it.await()
+            }
+
+            autoCloseAfterFinish()
+
             showSuccess(orderScreenState)
+        }
+    }
+
+    private fun dismissProductDialog() {
+        orderScreenState = orderScreenState.copy(
+            showUpdateProductsDialog = false,
+            currentStep = OrderScreenState.ScreenStep.FINISH_ORDER
+        )
+
+        autoCloseAfterFinish()
+
+        showSuccess(orderScreenState)
+    }
+
+    private fun deleteCurrentOrderAndFinish() {
+        execute {
+            showLoading()
+            deleteOrderUseCase(orderScreenState.order)
+                .onSuccess {
+                    resetStateAndLeave()
+                }
+                .onFailure {
+                    showError(it.code)
+                }
         }
     }
 }
