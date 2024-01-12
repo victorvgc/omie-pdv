@@ -10,9 +10,11 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.victorvgc.design_system.ui.theme.AppTheme
+import com.victorvgc.omiepdv.R
 import com.victorvgc.omiepdv.bottom_navigation.BottomNavMenu
 import com.victorvgc.omiepdv.bottom_navigation.BottomNavMenuItem
 
@@ -30,13 +32,16 @@ fun HomeScreen(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text(text = "Home")
+                    Text(text = LocalContext.current.getString(R.string.dashboard))
                 },
                 scrollBehavior = scrollBehavior
             )
         },
         bottomBar = {
-            BottomNavMenu(onMenuItemClick = onNavMenuClicked)
+            BottomNavMenu(
+                selectedItem = BottomNavMenuItem.DASHBOARD,
+                onMenuItemClick = onNavMenuClicked
+            )
         }
     ) { padding ->
         content(Modifier.padding(padding))
@@ -48,6 +53,9 @@ fun HomeScreen(
 @Composable
 fun PreviewHomeScreen() {
     AppTheme {
-        HomeScreen(onNavMenuClicked = {}, content = {})
+        HomeScreen(
+            onNavMenuClicked = {},
+            content = {},
+        )
     }
 }

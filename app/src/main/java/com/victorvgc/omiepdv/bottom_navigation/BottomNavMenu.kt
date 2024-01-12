@@ -1,23 +1,17 @@
 package com.victorvgc.omiepdv.bottom_navigation
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
-import com.victorvgc.design_system.ui.components.buttons.BaseFloatingActionButton
-import com.victorvgc.design_system.ui.components.buttons.BottomNavButton
 import com.victorvgc.design_system.ui.theme.AppTheme
 import com.victorvgc.omiepdv.R
 import com.victorvgc.design_system.R as designSystemR
@@ -28,37 +22,55 @@ enum class BottomNavMenuItem {
 
 @Composable
 fun BottomNavMenu(
-    modifier: Modifier = Modifier,
+    selectedItem: BottomNavMenuItem,
     onMenuItemClick: (BottomNavMenuItem) -> Unit
 ) {
-    Column {
-        Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.primary)
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.SpaceAround,
-            verticalAlignment = Alignment.CenterVertically
-        )
-        {
-            BottomNavButton(
-                Modifier.weight(1f),
-                icon = designSystemR.drawable.ic_dashboard,
-                label = LocalContext.current.getString(R.string.dashboard)
-            ) {
+    NavigationBar {
+        NavigationBarItem(
+            selected = selectedItem == BottomNavMenuItem.DASHBOARD,
+            onClick = {
                 onMenuItemClick(BottomNavMenuItem.DASHBOARD)
+            },
+            label = {
+                Text(text = LocalContext.current.getString(R.string.dashboard))
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(id = designSystemR.drawable.ic_dashboard),
+                    contentDescription = null
+                )
             }
-            BaseFloatingActionButton(Modifier.weight(1f), icon = Icons.Default.Add) {
+        )
+        NavigationBarItem(
+            selected = selectedItem == BottomNavMenuItem.CREATE_ORDER,
+            onClick = {
                 onMenuItemClick(BottomNavMenuItem.CREATE_ORDER)
+            },
+            label = {
+                Text(text = LocalContext.current.getString(R.string.create_order))
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null
+                )
             }
-            BottomNavButton(
-                Modifier.weight(1f),
-                icon = designSystemR.drawable.ic_more,
-                label = LocalContext.current.getString(R.string.more)
-            ) {
+        )
+        NavigationBarItem(
+            selected = selectedItem == BottomNavMenuItem.MORE,
+            onClick = {
                 onMenuItemClick(BottomNavMenuItem.MORE)
+            },
+            label = {
+                Text(text = LocalContext.current.getString(R.string.more))
+            },
+            icon = {
+                Icon(
+                    painter = painterResource(id = designSystemR.drawable.ic_more),
+                    contentDescription = null
+                )
             }
-        }
+        )
     }
 }
 
@@ -68,7 +80,9 @@ fun BottomNavMenu(
 fun PreviewBottomNavMenu() {
     AppTheme {
         Column {
-            BottomNavMenu {}
+            BottomNavMenu(
+                selectedItem = BottomNavMenuItem.DASHBOARD,
+            ) {}
         }
     }
 }

@@ -1,15 +1,18 @@
 package com.victorvgc.domain.core
 
-import com.victorvgc.domain.utils.reduceTo
+import com.victorvgc.utils.extensions.reduceTo
 import java.math.BigDecimal
+import java.util.Date
 
 data class Order(
     val id: Long,
-    val client: Client
+    val client: Client = Client.Empty,
+    val productList: List<OrderProduct> = emptyList(),
+    val createdAt: Long = Date().time
 ) {
-    private val _productList = mutableListOf<OrderProduct>()
-
-    val productList: List<OrderProduct> = _productList
+    companion object {
+        val Empty = Order(0)
+    }
 
     val totalUnits: Long
         get() = productList.reduceTo { acc, next ->
@@ -29,13 +32,19 @@ data class Order(
             return@reduceTo next.totalPrice
         } ?: BigDecimal.ZERO
 
-    fun addProduct(product: Product, quantity: Long) {
-        _productList.add(OrderProduct(product, quantity))
+    fun addProduct(product: Product, quantity: Long): Order {
+        val mutableList = productList.toMutableList()
+        mutableList.add(OrderProduct(product, quantity))
+
+        return this.copy(productList = mutableList)
     }
 
-    fun removeProduct(product: Product) {
-        _productList.removeIf {
+    fun removeProduct(product: Product): Order {
+        val mutableList = productList.toMutableList()
+        mutableList.removeIf {
             it.product.name == product.name
         }
+
+        return this.copy(productList = mutableList)
     }
 }

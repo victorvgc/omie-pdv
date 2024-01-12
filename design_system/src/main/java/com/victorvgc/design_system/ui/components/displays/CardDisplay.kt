@@ -2,8 +2,6 @@ package com.victorvgc.design_system.ui.components.displays
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,13 +9,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -56,7 +55,7 @@ fun <T> CardDisplay(
     val dataColor = if (showIndicator) {
         when (indicatorDirection) {
             IndicatorDirection.UP -> {
-                MaterialTheme.colorScheme.onPrimaryContainer
+                MaterialTheme.colorScheme.primary
             }
 
             IndicatorDirection.DOWN -> {
@@ -64,7 +63,7 @@ fun <T> CardDisplay(
             }
         }
     } else {
-        MaterialTheme.colorScheme.onPrimaryContainer
+        MaterialTheme.colorScheme.onSurfaceVariant
     }
 
     val componentModifier = if (onClick != null) {
@@ -73,40 +72,42 @@ fun <T> CardDisplay(
         modifier
     }
 
-    Column(
-        modifier = componentModifier
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(8.dp)
-            )
-            .padding(8.dp)
-            .size(64.dp)
+    Card(
+        modifier = componentModifier.size(90.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        )
     ) {
-        Image(
-            modifier = Modifier.size(16.dp),
-            painter = painterResource(id = icon),
-            contentDescription = label,
-            colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.onPrimaryContainer)
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimaryContainer)
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = componentModifier
+                .padding(8.dp)
         ) {
-            Text(
-                text = dataToString,
-                style = MaterialTheme.typography.bodyMedium.copy(color = dataColor)
+            Icon(
+                modifier = Modifier.size(16.dp),
+                painter = painterResource(id = icon),
+                contentDescription = label,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            AnimatedVisibility(visible = showIndicator) {
-                Image(
-                    painter = painterResource(id = dataIcon),
-                    contentDescription = indicatorDirection.name,
-                    colorFilter = ColorFilter.tint(dataColor)
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = dataToString,
+                    style = MaterialTheme.typography.bodyLarge.copy(color = dataColor)
                 )
+                AnimatedVisibility(visible = showIndicator) {
+                    Icon(
+                        painter = painterResource(id = dataIcon),
+                        contentDescription = indicatorDirection.name,
+                        tint = dataColor
+                    )
+                }
             }
         }
     }
